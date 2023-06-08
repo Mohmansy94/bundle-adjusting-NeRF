@@ -13,6 +13,9 @@ We provide PyTorch code for all experiments: planar image alignment, NeRF/BARF o
 
 --------------------------------------
 
+### Trained model results on different activation functions
+https://drive.google.com/file/d/1-B-cuYMS80-fW23F2n00GVzzbVYYQEcY/view?usp=sharing
+
 ### Prerequisites
 
 - Note: for Azure ML support for this repository, please consider checking out [this branch](https://github.com/szymanowiczs/bundle-adjusting-NeRF/tree/azureml_training_script) by Stan Szymanowicz.
