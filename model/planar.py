@@ -3,6 +3,9 @@ import os,sys,time
 import torch
 import torch.nn.functional as torch_F
 import torchvision
+from torch.nn import Module, Parameter
+from torch import nn
+
 import torchvision.transforms.functional as torchvision_F
 import tqdm
 from easydict import EasyDict as edict
@@ -225,7 +228,29 @@ class NeuralImageFunction(torch.nn.Module):
             if li in opt.arch.skip: feat = torch.cat([feat,points_enc],dim=-1)
             feat = layer(feat)
             if li!=len(self.mlp)-1:
-                feat = torch_F.relu(feat)
+                #feat = torch_F.relu(feat)
+                
+                device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+                
+               #gauss_act = GaussianActivation().to(device)
+               #feat = gauss_act(feat.to(device))
+                
+               #supe_gaus_acts = SuperGaussianActivation().to(device)
+               #feat = supe_gaus_acts(feat.to(device))
+                
+                quadratic_act = QuadraticActivation().to(device)
+                feat = quadratic_act(feat.to(device))
+                
+              #  exp_sin_act = ExpSinActivation().to(device)
+              #  feat = exp_sin_act(feat.to(device))    
+                
+               # laplacian_act = LaplacianActivation().to(device)
+                #feat = laplacian_act(feat.to(device))  
+                
+                #multi_quadratic_act = MultiQuadraticActivation().to(device)
+                #feat = multi_quadratic_act(feat.to(device))
+                
+
         rgb = feat.sigmoid_() # [B,...,3]
         return rgb
 
@@ -247,3 +272,53 @@ class NeuralImageFunction(torch.nn.Module):
             shape = input_enc.shape
             input_enc = (input_enc.view(-1,L)*weight).view(*shape)
         return input_enc
+
+
+class GaussianActivation(Module):
+    def __init__(self, a=0.1, trainable=True):
+        super().__init__()
+        self.register_parameter('a', Parameter(a * torch.ones(1), trainable))
+
+    def forward(self, x):
+        return torch.exp(-x ** 2 / (2 * self.a ** 2))
+
+class SuperGaussianActivation(nn.Module):
+    def __init__(self, a=1, b=1, trainable=True):
+        super().__init__()
+        self.register_parameter('a', nn.Parameter(a*torch.ones(1), trainable))
+        self.register_parameter('b', nn.Parameter(b*torch.ones(1), trainable))
+
+    def forward(self, x):
+        return torch.exp(-x**2/(2*self.a**2))**self.b
+    
+class QuadraticActivation(nn.Module):
+    def __init__(self, a=1., trainable=True):
+        super().__init__()
+        self.register_parameter('a', nn.Parameter(a*torch.ones(1), trainable))
+
+    def forward(self, x):
+        return 1/(1+(self.a*x)**2)
+    
+class MultiQuadraticActivation(nn.Module):
+    def __init__(self, a=1., trainable=True):
+        super().__init__()
+        self.register_parameter('a', nn.Parameter(a*torch.ones(1), trainable))
+
+    def forward(self, x):
+        return 1/(1+(self.a*x)**2)**0.5
+    
+class ExpSinActivation(nn.Module):
+    def __init__(self, a=1., trainable=True):
+        super().__init__()
+        self.register_parameter('a', nn.Parameter(a*torch.ones(1), trainable))
+
+    def forward(self, x):
+        return torch.exp(-torch.sin(self.a*x))
+    
+ class LaplacianActivation(nn.Module):
+    def __init__(self, a=1., trainable=True):
+        super().__init__()
+        self.register_parameter('a', nn.Parameter(a*torch.ones(1), trainable))
+
+    def forward(self, x):
+        return torch.exp(-torch.abs(x)/self.a)
