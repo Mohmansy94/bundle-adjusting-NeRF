@@ -315,7 +315,7 @@ class ExpSinActivation(nn.Module):
     def forward(self, x):
         return torch.exp(-torch.sin(self.a*x))
     
- class LaplacianActivation(nn.Module):
+class LaplacianActivation(nn.Module):
     def __init__(self, a=1., trainable=True):
         super().__init__()
         self.register_parameter('a', nn.Parameter(a*torch.ones(1), trainable))
