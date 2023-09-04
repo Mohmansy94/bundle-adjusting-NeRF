@@ -6,10 +6,10 @@ https://drive.google.com/drive/folders/1dW30MlMMkJhKQNFPMX6dEYAXvQyEyGEc?usp=sha
 
 - #### 1. Planar image alignment experiment using different activation functions
 
-Please follow the following steps:
+  Please follow the following steps:
 
-1. Open Google colab.
-2. Run this notebook, `BARF_using_activation_function.ipynb`, on Google Colab and follow the code instructions for training and visualization.
+    1. Open Google colab.
+    2. Run this notebook, `BARF_using_activation_function.ipynb`, on Google Colab and follow the code instructions for training and visualization.
 
      
 - #### 2. Planar image alignment experiment
