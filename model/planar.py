@@ -228,27 +228,36 @@ class NeuralImageFunction(torch.nn.Module):
             if li in opt.arch.skip: feat = torch.cat([feat,points_enc],dim=-1)
             feat = layer(feat)
             if li!=len(self.mlp)-1:
-                #feat = torch_F.relu(feat)
-                
                 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
                 
-               #gauss_act = GaussianActivation().to(device)
-               #feat = gauss_act(feat.to(device))
+                # Please modify this part and select your activation function
                 
+                # 1. relu activation function
+                #feat = torch_F.relu(feat)
+                
+                # 2. Gaussian activation function
+                gauss_act = GaussianActivation().to(device)
+                feat = gauss_act(feat.to(device))
+                
+               # 3. Super gaussian activation function
                #supe_gaus_acts = SuperGaussianActivation().to(device)
                #feat = supe_gaus_acts(feat.to(device))
-                
-                quadratic_act = QuadraticActivation().to(device)
-                feat = quadratic_act(feat.to(device))
-                
-              #  exp_sin_act = ExpSinActivation().to(device)
-              #  feat = exp_sin_act(feat.to(device))    
-                
+        
+               # 4. Quadratic activation function
+               #quadratic_act = QuadraticActivation().to(device)
+               #feat = quadratic_act(feat.to(device))
+
+               # 5. ExpSin activation function
+               #exp_sin_act = ExpSinActivation().to(device)
+               #feat = exp_sin_act(feat.to(device))    
+
+               # 6. Laplacian activation function
                # laplacian_act = LaplacianActivation().to(device)
-                #feat = laplacian_act(feat.to(device))  
-                
-                #multi_quadratic_act = MultiQuadraticActivation().to(device)
-                #feat = multi_quadratic_act(feat.to(device))
+               #feat = laplacian_act(feat.to(device))  
+
+               # 7. MultiQuadratic activation function
+               #multi_quadratic_act = MultiQuadraticActivation().to(device)
+               #feat = multi_quadratic_act(feat.to(device))
                 
 
         rgb = feat.sigmoid_() # [B,...,3]
